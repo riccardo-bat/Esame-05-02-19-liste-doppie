@@ -1,22 +1,29 @@
-/*******************************/
-/* HEADER MODULO "liste" */
-/*******************************/
-struct elem
-{
-       tipo_inf inf;
-       elem* pun ;
-       elem* prev;
-} ;
+#ifndef LISTE_H
+#define LISTE_H
 
-typedef elem* lista ;
-	
-lista tail(lista);
-lista prev(lista);
-lista insert_elem(lista, elem*);
-lista delete_elem(lista, elem*);
-lista ord_insert_elem(lista, elem*);
+#include "tipo.h"
 
-tipo_inf head(lista);
-elem* ord_search(lista, tipo_inf);
-elem* new_elem(tipo_inf);
-elem* search(lista, tipo_inf);
+typedef struct elem {
+    tipo_inf       inf;
+    struct elem   *pun;   /* successivo */
+    struct elem   *prev;  /* precedente */
+} elem, *lista;
+
+/* accesso */
+tipo_inf  head(lista p);
+lista      tail(lista p);
+lista      prev_elem(lista p);
+
+/* costruzione/cancellazione */
+elem*      new_elem(tipo_inf v);
+lista      insert_elem(lista head, elem *e);
+lista      delete_elem(lista head, elem *e);
+
+/* ricerca */
+elem*      search(lista head, tipo_inf v);
+elem*      ord_search(lista head, tipo_inf v);
+
+/* inserimento ordinato */
+lista      ord_insert_elem(lista head, elem *e);
+
+#endif // LISTE_H
