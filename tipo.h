@@ -2,7 +2,6 @@
 	#define TIPO_H
 
 	typedef struct {
-		/* metti qui i campi che ti servono, es.: */
 		int  value;
 		char descrizione[50];
 	} tipo_inf;

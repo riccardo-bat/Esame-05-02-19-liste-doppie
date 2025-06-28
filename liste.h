@@ -7,7 +7,9 @@ typedef struct elem {
     tipo_inf       inf;
     struct elem   *pun;   /* successivo */
     struct elem   *prev;  /* precedente */
-} elem, *lista;
+} elem;
+
+typedef elem* lista;
 
 /* accesso */
 tipo_inf  head(lista p);
