@@ -1,6 +1,10 @@
 #ifndef TIPO_H
 	#define TIPO_H
 
+	#include <stdio.h>
+	#include <stdlib.h>
+	#include <string.h>
+
 	typedef struct {
 		int  value;
 		char descrizione[50];
