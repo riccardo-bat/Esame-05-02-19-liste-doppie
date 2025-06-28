@@ -6,6 +6,7 @@ CFLAGS = -Wall
 #Fase di linking
 esame: compito.o liste.o tipo.o 
 	$(CC) $(CFLAGS) -o $@ $^
+	del /F *.o *.out *.gch
 
 #Fase di traduzione
 compito.o: compito.c liste.h tipo.h 
@@ -19,6 +20,6 @@ tipo.o: tipo.c tipo.h
 
 
 clean: 
-	del /F *.o *.out *.gch
+	del /F *.o *.out *.gch *.exe
 
 .PHONY: clean

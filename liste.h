@@ -7,9 +7,9 @@
        #include <string.h>
 
        typedef struct elem {
-       tipo_inf       inf;
-       struct elem   *pun;   /* successivo */
-       struct elem   *prev;  /* precedente */
+              tipo_inf       inf;
+              struct elem   *pun;   /* successivo */
+              struct elem   *prev;  /* precedente */
        } elem;
 
        typedef elem* lista;
