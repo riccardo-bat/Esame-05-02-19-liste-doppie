@@ -14,7 +14,6 @@ int compare(tipo_inf a, tipo_inf b){
     if(a.value < b.value) return -1;
     else if(a.value > b.value) return 1;
     else return 0;
-    
 }
 
 void copy(tipo_inf *dest, tipo_inf src){
