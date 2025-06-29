@@ -6,7 +6,7 @@
 
 //prototipi 
 long int int_input(char*, int, int);
-char char_input(char* msg);
+char* string_input(char* msg);
 void pesca(lista* carte_utente);
 void stampa(lista carte_utente);
 lista scala(lista carte, int* lunghezza);
@@ -120,17 +120,17 @@ long int int_input(char* msg, int minimum_value, int max_value){
     return cpp;
 }
 
-char char_input(char* msg){
+char* string_input(char* msg){
     printf("%s", msg); 
-    char buffer; 
+    int max_car_descrizione = 50;
+    char buffer[max_car_descrizione]; 
 
-    while((buffer = getchar()) == '\n'){
+    while(fgets(buffer, max_car_descrizione - 1, stdin) == NULL){
         printf("\nInput fallito\n");
     }
 
-    //per evitare che il "\n" rimanga salvato nel terminale, questo viene consumato
-    while (getchar() != '\n' && getchar() != EOF)
-        ;
+    if(buffer[strlen(buffer) - 1] == '\n')
+        buffer[strlen(buffer) - 1] = '\0';
 
     //effettuare il controllo che sia == 'F', 'C', 'Q', 'P'
     return buffer;
@@ -141,13 +141,12 @@ char char_input(char* msg){
  * l'input delle carte è gestito da tastiera
  */
 void pesca(lista* carte_utente){
-    char seme = char_input("\nSeme della carta da pescare: "); 
+    char* seme = string_input("\nSeme della carta da pescare: "); 
     int valore = int_input("Valore della carta da pescare: ", 1, 13);
 
     //creo la carta value + seme
     tipo_inf carta_da_inserire;   
-    char tmp[2] = { seme, '\0' };
-    strcpy(carta_da_inserire.descrizione, tmp);
+    strcpy(carta_da_inserire.descrizione, seme);
     carta_da_inserire.value = valore;
 
     //aggiungo la carta alla lista in base all'ordine delle carte
