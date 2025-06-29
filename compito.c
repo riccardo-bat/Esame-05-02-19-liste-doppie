@@ -1,5 +1,6 @@
 #include "tipo.h"
 #include "liste.h"
+#include <stdbool.h>
 
 #define MAX_CARTE 52
 
@@ -10,6 +11,7 @@ void pesca(lista* carte_utente);
 void stampa(lista carte_utente);
 lista scala(lista carte, int* lunghezza);
 void stampaScala(lista primaCarta, int lunghezza);  
+int cala(lista* carte);
 
 int main(){
     //int numero_giocatori = 2;
@@ -34,15 +36,58 @@ int main(){
     stampa(carte_utente_2);
 
 
-    int lunghezza_scala = 0; 
-    lista scala_utente1 = scala(carte_utente_1, &lunghezza_scala);
+    //punto 2
+    int lunghezza_scala_utente1 = 0; 
+    lista scala_utente1 = scala(carte_utente_1, &lunghezza_scala_utente1);
     printf("\n\nPrima scala incontrata per l'utente 1: "); 
-    stampaScala(scala_utente1, lunghezza_scala);
+    stampaScala(scala_utente1, lunghezza_scala_utente1);
 
-    lunghezza_scala = 0;
-    lista scala_utente2 = scala(carte_utente_2, &lunghezza_scala);
+    int lunghezza_scala_utente2 = 0;
+    lista scala_utente2 = scala(carte_utente_2, &lunghezza_scala_utente2);
     printf("\n\nPrima scala incontrata per l'utente 2: "); 
-    stampaScala(scala_utente2, lunghezza_scala);
+    stampaScala(scala_utente2, lunghezza_scala_utente2);
+
+
+    //punto 2.a
+    //printf("\nPunteggio prima scala trovata per l'utente 1: %d", cala(&scala_utente1));
+    //printf("\nPunteggio prima scala trovata per l'utente 2: %d", cala(&scala_utente2));
+
+    //implementazione di 2 turni 
+    bool break_game = false;
+    int numero_turni = 2;
+    int punteggio1 = 0, punteggio2 = 0;
+
+    for(int n_turno = 1; n_turno<=numero_turni && !break_game; n_turno++){
+        printf("\n\nTURNO NUMERO [%d]", n_turno);
+        
+        //mano del giocatore 1
+        pesca(&carte_utente_1); 
+        punteggio1 += cala(&carte_utente_1);
+        printf("\nPunteggio giocatore 1: %d", punteggio1);
+        printf("\nMAZZO RIMANENTE PER L'UTENTE 1: \n");  
+        stampa(carte_utente_1);
+
+        //se l'utente 1 ha già vinto... 
+        if(carte_utente_1 == NULL && punteggio1 > punteggio2){
+            printf("\nIL VINCITORE E' IL GIOCATORE 1!!!");
+            break_game = true;
+        } else{
+            //mano del giocatore 2
+            pesca(&carte_utente_2);
+            punteggio2 += cala(&carte_utente_2); //sommo il punteggio di questo turno con quelli precedenti
+            printf("\nPunteggio giocatore 2: %d", punteggio2);
+            printf("\nMAZZO RIMANENTE PER L'UTENTE 2: \n");  
+            stampa(carte_utente_2);
+
+            if(carte_utente_2 == NULL && punteggio2 > punteggio1){
+                printf("\nIL VINCITORE E' IL GIOCATORE 2!!!");
+                break_game = true;
+            }
+
+            //else --> se nessuno dei due ha terminato le carte, non vince nessuno 
+        }
+    }
+
 
     return 0;
 }
@@ -115,9 +160,12 @@ void pesca(lista* carte_utente){
  * @param carte_utente 
  */
 void stampa(lista carte_utente){
-    while(carte_utente != NULL){
-        printf("\t%d%s", carte_utente->inf.value, carte_utente->inf.descrizione);  
-        carte_utente = carte_utente->pun;
+    if(carte_utente == NULL) printf("\nFine gioco"); 
+    else{
+        while(carte_utente != NULL){
+            printf("\t%d%s", carte_utente->inf.value, carte_utente->inf.descrizione);  
+            carte_utente = carte_utente->pun;
+        }
     }
 
     printf("\n\n");
@@ -178,6 +226,7 @@ elem* scala(lista carte, int* lunghezza){
 
     //se scorrendo tutta la lista ho identificato una scala, la ritorno 
     if(*lunghezza >= 3) return primaCartaScala;
+    *lunghezza = 0; //ripristino che la lunghezza della scala è pari a 0 (non è stata trovata)
     return NULL;   
     
 }
@@ -189,4 +238,34 @@ void stampaScala(lista primaCarta, int lunghezza){
     }
 
     printf("\n\n");
+}
+
+int cala(lista* carte_utente){
+    //cala la prima scala trovata, eliminando quelle carte dalla mano del giocatore
+    //cerco la prima scala del giocatore
+    int lunghezzaScala = 0; 
+    lista primaCartaScala = scala(*carte_utente, &lunghezzaScala);
+
+    //se l'utente non ha scal in mano, il punteggio della scala è 0 
+    if(primaCartaScala == NULL) return 0; 
+
+    //elimino le carte appartenenti la scala dal mazzo dell'utente e calcolo il punteggio totale
+    int punteggioTotale = 0; 
+    printf("\nCarte calate: ");
+
+    for(int i=0; i<lunghezzaScala; i++){
+        punteggioTotale += primaCartaScala->inf.value;
+        printf("\t%d%s", primaCartaScala->inf.value, primaCartaScala->inf.descrizione);
+
+        if(primaCartaScala->pun != NULL){ //se non devo eliminare l'ultima carta del mezzo... 
+            //faccio prima->pun per evitare di perdere il riferimento
+            primaCartaScala = primaCartaScala->pun;
+            *carte_utente = delete_elem(*carte_utente, primaCartaScala->prev); 
+        } else{
+            *carte_utente = delete_elem(*carte_utente, primaCartaScala);
+        }
+        
+    }
+
+    return punteggioTotale;
 }
